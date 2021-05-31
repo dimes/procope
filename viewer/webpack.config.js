@@ -5,10 +5,25 @@ const HtmlWebpackPlugin = require('html-webpack-plugin');
 const { join } = require('path');
 const { ProvidePlugin } = require('webpack');
 
+const entryNames = [
+  'index',
+];
+
+const entries = {};
+const htmlPlugins = [];
+for (const entryName of entryNames) {
+  entries[entryName] = `./src/${entryName}.tsx`;
+  htmlPlugins.push(new HtmlWebpackPlugin({
+    filename: `${entryName}.html`,
+    template: path.resolve(__dirname, 'templates', `${entryName}.html`),
+    inject: 'body',
+    hash: true,
+    chunks: [entryName]
+  }));
+}
+
 module.exports = {
-  entry: {
-    index: './src/index.tsx',
-  },
+  entry: entries,
   devtool: 'inline-source-map',
   module: {
     rules: [
@@ -37,22 +52,22 @@ module.exports = {
     }),
     new CopyPlugin({ patterns: [{ from: 'static' }] }),
     new ForkTsCheckerWebpackPlugin({ typescript: { configFile: join(__dirname, 'tsconfig.json') } }),
-    new HtmlWebpackPlugin({
-      filename: 'index.html',
-      template: path.resolve(__dirname, 'templates', 'index.html'),
-      inject: 'body',
-      hash: true,
-      chunks: ['index']
-    })
+    ...htmlPlugins,
   ],
   output: {
     filename: '[name].bundle.js',
     path: path.resolve(__dirname, 'dist'),
+    publicPath: '/',
   },
   devServer: {
     contentBase: path.join(__dirname, 'dist'),
     compress: true,
     port: 9000,
+    historyApiFallback: {
+      rewrites: [
+        { from: /^\/feed\/.+/, to: '/index.html' }
+      ],
+    },
   },
   mode: 'development',
   optimization: {

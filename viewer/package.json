@@ -1,0 +1,29 @@
+{
+  "name": "procope-viewer",
+  "version": "1.0.0",
+  "description": "",
+  "main": "webpack.config.js",
+  "dependencies": {
+    "@onflow/fcl": "0.0.70",
+    "@onflow/types": "0.0.4",
+    "buffer": "^6.0.3",
+    "copy-webpack-plugin": "^9.0.0",
+    "fork-ts-checker-webpack-plugin": "^6.2.10",
+    "html-webpack-plugin": "^5.3.1",
+    "https-browserify": "^1.0.0",
+    "process": "^0.11.10",
+    "safe-typed-html": "^1.0.5",
+    "stream-http": "^3.2.0",
+    "ts-loader": "^9.2.2",
+    "typescript": "^4.3.2",
+    "webpack": "^5.38.1",
+    "webpack-cli": "^4.7.0",
+    "webpack-dev-server": "^3.11.2"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "start": "webpack serve"
+  },
+  "author": "",
+  "license": "MIT"
+}

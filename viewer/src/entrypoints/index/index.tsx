@@ -1,6 +1,5 @@
-import { Bootstrap } from './bootstrap';
-import { FeedController } from './feed';
-import { LoginController } from './login';
+import { Bootstrap } from '../../bootstrap';
+import { LoginController } from '../../login';
 
 window.onload = async () => {
   const bootstrap = new Bootstrap();
@@ -9,7 +8,6 @@ window.onload = async () => {
   console.log('Creating app with session', session);
   if (session.user.loggedIn) {
     console.log('Logged in');
-    window.feed = new FeedController(session);
   } else {
     console.log('Not logged in');
     window.login = new LoginController(session);

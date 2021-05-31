@@ -16,6 +16,10 @@ export function qs<T extends HTMLElement>(
   return container.querySelector<T>(selector)
 }
 
+export function div(): HTMLDivElement {
+  return document.createElement('div');
+}
+
 export function ensureEl<T extends HTMLElement>(
   container: HTMLElement,
   className: string,

@@ -102,6 +102,13 @@ pub contract Procope {
     return <-postStore
   }
 
+  pub fun exists(address: Address): Bool {
+    let postStore = getAccount(address)
+      .getCapability<&Procope.PostStore{Procope.HasPosts}>(/public/Feed)
+      .borrow()
+    return postStore != nil
+  }
+
   pub fun read(address: Address): ReadOnlyPostStore? {
     if let postStore = getAccount(address)
       .getCapability<&Procope.PostStore{Procope.HasPosts}>(/public/Feed)

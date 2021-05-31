@@ -4,15 +4,19 @@ const ForkTsCheckerWebpackPlugin = require('fork-ts-checker-webpack-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const { join } = require('path');
 const { ProvidePlugin } = require('webpack');
+// const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer');
 
 const entryNames = [
   'index',
+  'feed',
+  'feed/new',
 ];
 
 const entries = {};
 const htmlPlugins = [];
-for (const entryName of entryNames) {
-  entries[entryName] = `./src/${entryName}.tsx`;
+for (const rawName of entryNames) {
+  const entryName = rawName.replace(/\//g, '_');
+  entries[entryName] = `./src/entrypoints/${rawName}/index.tsx`;
   htmlPlugins.push(new HtmlWebpackPlugin({
     filename: `${entryName}.html`,
     template: path.resolve(__dirname, 'templates', `${entryName}.html`),
@@ -24,7 +28,6 @@ for (const entryName of entryNames) {
 
 module.exports = {
   entry: entries,
-  devtool: 'inline-source-map',
   module: {
     rules: [
       {
@@ -35,6 +38,11 @@ module.exports = {
           transpileOnly: true
         }
       },
+      {
+        test: /\.css$/,
+        include: path.resolve(__dirname, 'src'),
+        use: ['style-loader', 'css-loader', 'postcss-loader'],
+      }
     ],
   },
   resolve: {
@@ -46,6 +54,7 @@ module.exports = {
     },
   },
   plugins: [
+    // new BundleAnalyzerPlugin(),
     new ProvidePlugin({
       Buffer: ['buffer', 'Buffer'],
       process: 'process/browser',
@@ -58,19 +67,5 @@ module.exports = {
     filename: '[name].bundle.js',
     path: path.resolve(__dirname, 'dist'),
     publicPath: '/',
-  },
-  devServer: {
-    contentBase: path.join(__dirname, 'dist'),
-    compress: true,
-    port: 9000,
-    historyApiFallback: {
-      rewrites: [
-        { from: /^\/feed\/.+/, to: '/index.html' }
-      ],
-    },
-  },
-  mode: 'development',
-  optimization: {
-    usedExports: true,
   },
 }

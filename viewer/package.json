@@ -6,23 +6,32 @@
   "dependencies": {
     "@onflow/fcl": "0.0.70",
     "@onflow/types": "0.0.4",
+    "autoprefixer": "^10.2.6",
     "buffer": "^6.0.3",
     "copy-webpack-plugin": "^9.0.0",
+    "css-loader": "^5.2.6",
     "fork-ts-checker-webpack-plugin": "^6.2.10",
     "html-webpack-plugin": "^5.3.1",
     "https-browserify": "^1.0.0",
+    "postcss": "^8.3.0",
+    "postcss-loader": "^5.3.0",
     "process": "^0.11.10",
+    "rxjs": "^7.1.0",
     "safe-typed-html": "^1.0.5",
     "stream-http": "^3.2.0",
+    "style-loader": "^2.0.0",
+    "tailwindcss": "^2.1.2",
     "ts-loader": "^9.2.2",
     "typescript": "^4.3.2",
     "webpack": "^5.38.1",
+    "webpack-bundle-analyzer": "^4.4.2",
     "webpack-cli": "^4.7.0",
     "webpack-dev-server": "^3.11.2"
   },
   "devDependencies": {},
   "scripts": {
-    "start": "webpack serve"
+    "start": "webpack serve --config webpack.dev.js",
+    "build-prod": "NODE_ENV=production webpack --config webpack.prod.js"
   },
   "author": "",
   "license": "MIT"

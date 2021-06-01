@@ -8,10 +8,14 @@ import { Bootstrap } from '../../../bootstrap';
 import { parsePath } from '../../../util/path';
 import { Session } from '../../../session';
 import { FeedStore } from '../../../stores/feed';
+import { qs } from '../../../util/dom';
 
 export class NewPostController {
   private readonly feedStore: FeedStore;
   private readonly subscription: Subscription;
+
+  private exists: boolean = false;
+  private posting: boolean = false;
 
   constructor(
     private readonly session: Session,
@@ -21,7 +25,8 @@ export class NewPostController {
     this.subscription = this.feedStore
       .exists(this.address)
       .subscribe(exists => {
-        this.render(exists);
+        this.exists = exists;
+        this.render();
       });
   }
 
@@ -29,8 +34,42 @@ export class NewPostController {
     this.subscription.unsubscribe();
   }
 
-  render(exists: boolean) {
+  render() {
+    const main = qs('#main')!;
+    main.style.display = '';
 
+    const post = qs(main, 'button.post')!;
+    if (!post.onclick) {
+      post.onclick = async () => {
+        const title = qs<HTMLInputElement>(main, 'input.title')!.value;
+        if (!title) {
+          window.alert('Title must be set');
+          return;
+        }
+
+        const content = qs<HTMLInputElement>(main, 'textarea.content')!.value;
+        if (!content) {
+          window.alert('Content must be set');
+          return;
+        }
+
+        if (this.posting) {
+          return;
+        }
+        this.posting = true;
+
+        try {
+          if (!this.exists) {
+            await this.feedStore.initFeed();
+            this.exists = true;
+          }
+
+          await this.feedStore.createPost(title, content);
+        } finally {
+          this.posting = false;
+        }
+      };
+    }
   }
 }
 

@@ -1,105 +1,107 @@
 pub contract Procope {
   pub struct ReadOnlyPostStore {
-    pub let count: Int
-    pub let latest: ReadOnlyPost?
+    pub let totalCount: Int
+    pub let posts: [ReadOnlyPost]
 
     init(
-      count: Int,
-      latest: ReadOnlyPost?,
+      totalCount: Int,
+      posts: [ReadOnlyPost],
     ) {
-      self.count = count
-      self.latest = latest
+      self.totalCount = totalCount
+      self.posts = posts
     }
   }
 
   pub struct ReadOnlyPost {
-    pub let title: String;
-    pub let content: String;
-    pub let previous: ReadOnlyPostStore?;
+    pub let index: Int
+    pub let title: String
+    pub let content: String
     
     init(
+      index: Int,
       title: String,
       content: String,
-      previous: ReadOnlyPostStore?
     ) {
+      self.index = index
       self.title = title
       self.content = content
-      self.previous = previous
     }
   }
 
   pub resource Post {
+    pub let index: Int
     pub let title: String
     pub let content: String
-    pub let previous: @PostStore?
 
     init(
+      index: Int,
       title: String,
       content: String,
-      previous: @PostStore?
     ) {
+      self.index = index
       self.title = title
       self.content = content
-      self.previous <- previous
-    }
-
-    destroy() {
-      destroy self.previous
     }
 
     pub fun asReadOnly(): ReadOnlyPost {
       return ReadOnlyPost(
+        index: self.index,
         title: self.title,
         content: self.content,
-        previous: self.previous?.asReadOnly(),
       );
     }
   }
 
   pub resource interface HasPosts {
-    pub let count: Int
-    pub let latest: @Post?
-
-    pub fun asReadOnly(): ReadOnlyPostStore
+    pub fun asReadOnly(page: Int): ReadOnlyPostStore
   }
 
   pub resource PostStore: HasPosts {
-    pub let count: Int
-    pub let latest: @Post?
+    pub let posts: @[Post]
   
-    init(
-      count: Int,
-      latest: @Post?,
-    ) {
-      self.count = count
-      self.latest <- latest
+    init() {
+      self.posts <- [];
     }
 
     destroy() {
-      destroy self.latest
+      destroy self.posts
     }
 
-    pub fun asReadOnly(): ReadOnlyPostStore {
+    pub fun addPost(
+      title: String,
+      content: String,
+    ) {
+      let index = self.posts.length
+      let post <- create Post(index: index, title: title, content: content)
+      self.posts.append(<-post)
+    }
+
+    pub fun asReadOnly(page: Int): ReadOnlyPostStore {
+      let endIndex = self.max(0, self.posts.length - 16);
+      let posts: [ReadOnlyPost] = []
+
+      var i = endIndex
+      while i < self.posts.length {
+        posts.append(self.posts[i].asReadOnly())
+        i = i + 1
+      }
+      
       return ReadOnlyPostStore(
-        count: self.count,
-        latest: self.latest?.asReadOnly(),
+        totalCount: self.posts.length,
+        posts: posts,
       )
     }
+
+    priv fun max(_ a: Int, _ b: Int): Int {
+      if (a > b) {
+        return a
+      }
+      return b
+    }
   }
 
-  pub fun createEmptyPostStore(): @PostStore {
-    return <- create PostStore(count: 0, latest: nil)
-  }
-
-  pub fun addPost(
-    title: String,
-    content: String,
-    previous: @PostStore,
-  ): @PostStore {
-    let count = previous.count
-    let post <- create Post(title: title, content: content, previous: <-previous)
-    let postStore <- create PostStore(count: count + 1, latest: <-post)
-    return <-postStore
+  pub fun createPostStore(): @PostStore {
+    return <- create PostStore()
   }
 
   pub fun exists(address: Address): Bool {
@@ -109,11 +111,11 @@ pub contract Procope {
     return postStore != nil
   }
 
-  pub fun read(address: Address): ReadOnlyPostStore? {
+  pub fun read(address: Address, page: Int): ReadOnlyPostStore? {
     if let postStore = getAccount(address)
       .getCapability<&Procope.PostStore{Procope.HasPosts}>(/public/Feed)
       .borrow() {
-      return postStore.asReadOnly()
+      return postStore.asReadOnly(page: page)
     } else {
       return nil
     }

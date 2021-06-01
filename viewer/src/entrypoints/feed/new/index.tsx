@@ -1,7 +1,6 @@
 import '../../style.css';
 
 import { Subscription } from 'rxjs';
-import * as elements from 'safe-typed-html';
 
 import { Path } from '../';
 import { Bootstrap } from '../../../bootstrap';

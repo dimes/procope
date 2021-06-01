@@ -5,7 +5,7 @@ import * as elements from 'safe-typed-html';
 
 import { Bootstrap } from '../../bootstrap';
 import { Session } from '../../session';
-import { Feed, FeedStore, Post } from '../../stores/feed';
+import { FeedPage, FeedStore, Post } from '../../stores/feed';
 import { ensureEl, qs } from '../../util/dom';
 import { parsePath } from '../../util/path';
 
@@ -28,7 +28,8 @@ export class FeedController {
     this.subscription.unsubscribe();
   }
 
-  private render(feed: Feed | null) {
+  private render(page: FeedPage | null) {
+    console.log('Rendering feed page', page);
     const main = qs('#main')!;
     main.style.display = '';
 
@@ -64,25 +65,12 @@ export class FeedController {
       }
     }
 
-    const feedItems = this.flattenFeed(feed).map(item => (<div class="feed_item">
+    const posts = page?.posts?.reverse() ?? [];
+    const feedItems = posts.map(item => (<div class="feed_item">
       <h2>{item.title}</h2>
       <div class="content">{item.content}</div>
     </div>).toString());
     qs(feedContainer, '.feed_items')!.innerHTML = feedItems.join();
-  }
-
-  private flattenFeed(feed: Feed | null): Post[] {
-    if (!feed) {
-      return [];
-    }
-
-    let flattened: Post[] = [];
-    let current = feed.latest;
-    while (current) {
-      flattened.push(current);
-      current = current.previous?.latest;
-    }
-    return flattened;
   }
 }
 

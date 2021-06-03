@@ -8,8 +8,10 @@ import { Session } from '../../session';
 import { FeedPage, FeedStore, Post } from '../../stores/feed';
 import { ensureEl, qs } from '../../util/dom';
 import { parsePath } from '../../util/path';
+import { HeaderController } from '../../header';
 
 export class FeedController {
+  private readonly header: HeaderController;
   private readonly feedStore: FeedStore;
   private readonly subscription: Subscription;
 
@@ -17,6 +19,7 @@ export class FeedController {
     private readonly session: Session,
     private readonly account: string,
   ) {
+    this.header = new HeaderController(session);
     this.feedStore = new FeedStore();
     this.subscription = this.feedStore
       .fetchFeed(this.account)
@@ -32,25 +35,6 @@ export class FeedController {
     console.log('Rendering feed page', page);
     const main = qs('#main')!;
     main.style.display = '';
-
-    const logoutContainer = ensureEl(
-      main,
-      'logout',
-      () => {
-        const div = document.createElement('div');
-        div.innerHTML = (<div>
-          <button>Logout</button>
-        </div>).toString();
-        return div;
-      },
-    );
-
-    const logoutButton = qs(logoutContainer, 'button')!;
-    if (!logoutButton.onclick) {
-      logoutButton.onclick = () => {
-        this.session.user.logout();
-      }
-    }
 
     const feedContainer = qs(main, '.feed_container')!;
     qs(feedContainer, '.feed_title')!.innerText = this.account;
@@ -84,10 +68,5 @@ window.onload = async () => {
   const parsedPath: Path = parsePath('/feed/:account');
 
   console.log('Creating app with session', session, parsedPath);
-  if (session.user.loggedIn) {
-    console.log('Logged in');
-    window.feed = new FeedController(session, parsedPath.account);
-  } else {
-    console.log('Not logged in');
-  }
+  window.feed = new FeedController(session, parsedPath.account);
 };

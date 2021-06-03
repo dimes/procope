@@ -1,5 +1,5 @@
 import { Bootstrap } from '../../bootstrap';
-import { LoginController } from '../../login';
+import { HeaderController } from '../../header';
 
 window.onload = async () => {
   const bootstrap = new Bootstrap();
@@ -10,6 +10,6 @@ window.onload = async () => {
     console.log('Logged in');
   } else {
     console.log('Not logged in');
-    window.login = new LoginController(session);
+    window.login = new HeaderController(session);
   }
 };

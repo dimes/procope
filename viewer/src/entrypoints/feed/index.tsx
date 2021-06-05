@@ -4,11 +4,12 @@ import { Subscription } from 'rxjs';
 import * as elements from 'safe-typed-html';
 
 import { Bootstrap } from '../../bootstrap';
-import { Session } from '../../session';
-import { FeedPage, FeedStore, Post } from '../../stores/feed';
 import { qs } from '../../util/dom';
-import { parsePath } from '../../util/path';
+import { FeedPage, FeedStore } from '../../stores/feed';
 import { HeaderController } from '../../header';
+import { Session } from '../../session';
+import template from '../../templates/feed.html';
+import { parsePath } from '../../util/path';
 
 export class FeedController {
   private readonly header: HeaderController;
@@ -63,6 +64,8 @@ export interface Path {
 }
 
 window.onload = async () => {
+  qs('#main')!.innerHTML = template;
+
   const bootstrap = new Bootstrap();
   const session = await bootstrap.session;
   const parsedPath: Path = parsePath('/feed/:account');

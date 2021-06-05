@@ -1,7 +1,11 @@
 import { Bootstrap } from '../../bootstrap';
 import { HeaderController } from '../../header';
+import template from '../../templates/index.html';
+import { qs } from '../../util/dom';
 
 window.onload = async () => {
+  qs('#main')!.innerHTML = template;
+
   const bootstrap = new Bootstrap();
   const session = await bootstrap.session;
 

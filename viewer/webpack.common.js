@@ -19,7 +19,7 @@ for (const rawName of entryNames) {
   entries[entryName] = `./src/entrypoints/${rawName}/index.tsx`;
   htmlPlugins.push(new HtmlWebpackPlugin({
     filename: `${entryName}.html`,
-    template: path.resolve(__dirname, 'templates', `${entryName}.html`),
+    template: path.resolve(__dirname, 'src', 'templates', 'main.html'),
     inject: 'body',
     hash: true,
     chunks: [entryName]
@@ -42,7 +42,11 @@ module.exports = {
         test: /\.css$/,
         include: path.resolve(__dirname, 'src'),
         use: ['style-loader', 'css-loader', 'postcss-loader'],
-      }
+      },
+      {
+        test: /\.html$/,
+        use: 'html-loader',
+      },
     ],
   },
   resolve: {

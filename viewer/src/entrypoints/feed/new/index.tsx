@@ -5,11 +5,12 @@ import { Subscription } from 'rxjs';
 
 import { Path } from '../';
 import { Bootstrap } from '../../../bootstrap';
-import { parsePath } from '../../../util/path';
+import { HeaderController } from '../../../header';
 import { Session } from '../../../session';
 import { FeedStore } from '../../../stores/feed';
+import template from '../../../templates/feed_new.html';
 import { qs } from '../../../util/dom';
-import { HeaderController } from '../../../header';
+import { parsePath } from '../../../util/path';
 
 export class NewPostController {
   private readonly header: HeaderController;
@@ -85,6 +86,8 @@ export class NewPostController {
 }
 
 window.onload = async () => {
+  qs('#main')!.innerHTML = template;
+
   const bootstrap = new Bootstrap();
   const session = await bootstrap.session;
   const parsedPath: Path = parsePath('/feed/:account/new');

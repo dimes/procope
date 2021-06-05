@@ -1,17 +1,15 @@
-import '../../style.css';
-import './style.css';
+import '../style.css';
 
-import EasyMDE from 'easymde';
 import { Subscription } from 'rxjs';
 
-import { Path } from '../';
-import { Bootstrap } from '../../../bootstrap';
-import { HeaderController } from '../../../header';
-import { Session } from '../../../session';
-import { FeedStore } from '../../../stores/feed';
-import template from '../../../templates/feed_new.html';
-import { qs } from '../../../util/dom';
-import { parsePath } from '../../../util/path';
+import { Path } from '.';
+import { Bootstrap } from '../../bootstrap';
+import { HeaderController } from '../../header';
+import { Session } from '../../session';
+import { FeedStore } from '../../stores/feed';
+import template from '../../templates/feed/new.html';
+import { qs } from '../../util/dom';
+import { parsePath } from '../../util/path';
 
 export class NewPostController {
   private readonly header: HeaderController;
@@ -20,7 +18,6 @@ export class NewPostController {
 
   private exists: boolean = false;
   private posting: boolean = false;
-  private easyMde?: EasyMDE;
 
   constructor(
     private readonly session: Session,
@@ -44,15 +41,6 @@ export class NewPostController {
     const main = qs('#main')!;
     main.style.display = '';
 
-    if (!this.easyMde) {
-      this.easyMde = new EasyMDE({
-        element: qs(main, 'textarea.content')!,
-        minHeight: '300px',
-      });
-
-      qs(main, '.EasyMDEContainer .CodeMirror')?.classList.add('dark:bg-gray-600', 'dark:text-gray-200');
-    }
-
     const post = qs(main, 'button.post')!;
     if (!post.onclick) {
       post.onclick = async () => {
@@ -62,7 +50,7 @@ export class NewPostController {
           return;
         }
 
-        const content = this.easyMde?.value();
+        const content = qs<HTMLTextAreaElement>(main, 'textarea')?.value;
         console.log(content);
         if (!content) {
           window.alert('Content must be set');
@@ -81,6 +69,7 @@ export class NewPostController {
           }
 
           await this.feedStore.createPost(title, content);
+          window.location.href = `/feed/${this.address}`;
         } finally {
           this.posting = false;
         }

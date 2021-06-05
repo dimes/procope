@@ -1,7 +1,7 @@
-import { Bootstrap } from '../../bootstrap';
-import { HeaderController } from '../../header';
-import template from '../../templates/index.html';
-import { qs } from '../../util/dom';
+import { Bootstrap } from '../bootstrap';
+import { HeaderController } from '../header';
+import template from '../templates/index.html';
+import { qs } from '../util/dom';
 
 window.onload = async () => {
   qs('#main')!.innerHTML = template;

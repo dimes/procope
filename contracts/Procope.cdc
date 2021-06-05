@@ -16,15 +16,18 @@ pub contract Procope {
     pub let index: Int
     pub let title: String
     pub let content: String
+    pub let date: UInt64
     
     init(
       index: Int,
       title: String,
       content: String,
+      date: UInt64,
     ) {
       self.index = index
       self.title = title
       self.content = content
+      self.date = date
     }
   }
 
@@ -32,15 +35,18 @@ pub contract Procope {
     pub let index: Int
     pub let title: String
     pub let content: String
+    pub let date: UInt64
 
     init(
       index: Int,
       title: String,
       content: String,
+      date: UInt64,
     ) {
       self.index = index
       self.title = title
       self.content = content
+      self.date = date
     }
 
     pub fun asReadOnly(): ReadOnlyPost {
@@ -48,12 +54,14 @@ pub contract Procope {
         index: self.index,
         title: self.title,
         content: self.content,
+        date: self.date,
       );
     }
   }
 
   pub resource interface HasPosts {
     pub fun asReadOnly(page: Int): ReadOnlyPostStore
+    pub fun single(index: Int): ReadOnlyPost?
   }
 
   pub resource PostStore: HasPosts {
@@ -70,9 +78,10 @@ pub contract Procope {
     pub fun addPost(
       title: String,
       content: String,
+      date: UInt64,
     ) {
       let index = self.posts.length
-      let post <- create Post(index: index, title: title, content: content)
+      let post <- create Post(index: index, title: title, content: content, date: date)
       self.posts.append(<-post)
     }
 
@@ -90,6 +99,13 @@ pub contract Procope {
         totalCount: self.posts.length,
         posts: posts,
       )
+    }
+
+    pub fun single(index: Int): ReadOnlyPost? {
+      if (index >= 0 && index < self.posts.length) {
+        return self.posts[index].asReadOnly()
+      }
+      return nil
     }
 
     priv fun max(_ a: Int, _ b: Int): Int {
@@ -116,6 +132,16 @@ pub contract Procope {
       .getCapability<&Procope.PostStore{Procope.HasPosts}>(/public/Feed)
       .borrow() {
       return postStore.asReadOnly(page: page)
+    } else {
+      return nil
+    }
+  }
+
+  pub fun readSinglePost(address: Address, index: Int): ReadOnlyPost? {
+if let postStore = getAccount(address)
+      .getCapability<&Procope.PostStore{Procope.HasPosts}>(/public/Feed)
+      .borrow() {
+      return postStore.single(index: index)
     } else {
       return nil
     }

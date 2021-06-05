@@ -1,14 +1,17 @@
 import '../style.css';
+import './common.css';
 
+import DOMPurify from 'dompurify';
 import { Subscription } from 'rxjs';
 import * as elements from 'safe-typed-html';
+import snarkdown from 'snarkdown';
 
 import { Bootstrap } from '../../bootstrap';
 import { qs } from '../../util/dom';
 import { FeedPage, FeedStore } from '../../stores/feed';
 import { HeaderController } from '../../header';
 import { Session } from '../../session';
-import template from '../../templates/feed.html';
+import template from '../../templates/feed/index.html';
 import { parsePath } from '../../util/path';
 
 export class FeedController {
@@ -52,8 +55,10 @@ export class FeedController {
 
     const posts = page?.posts?.reverse() ?? [];
     const feedItems = posts.map(item => (<div class="feed_item mt-10">
-      <h2 class="text-2xl">{item.title}</h2>
-      <div class="content mt-3">{item.content}</div>
+      <h2 class="text-3xl">{item.title}</h2>
+      <div class="content mt-3"
+        dangerousInnerHtml={snarkdown(DOMPurify.sanitize(item.content, { USE_PROFILES: { html: true } }))}>
+      </div>
     </div>).toString());
     qs(feedContainer, '.feed_items')!.innerHTML = feedItems.join('');
   }

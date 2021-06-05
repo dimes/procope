@@ -1,0 +1,31 @@
+.feed_item .content h1 {
+  font-size: 1.5em;
+}
+
+.feed_item .content h2 {
+  font-size: 1.4em;
+}
+
+.feed_item .content h3 {
+  font-size: 1.3em;
+}
+
+.feed_item .content h4 {
+  font-size: 1.2em;
+}
+
+.feed_item .content h5 {
+  font-size: 1.1em;
+}
+
+.feed_item .content h6 {
+  font-weight: bold;
+}
+
+.feed_item .content ol {
+  list-style: decimal inside;
+}
+
+.feed_item .content ul {
+  list-style: disc inside;
+}

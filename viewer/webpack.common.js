@@ -8,15 +8,14 @@ const { ProvidePlugin } = require('webpack');
 
 const entryNames = [
   'index',
-  'feed',
+  'feed/index',
   'feed/new',
 ];
 
 const entries = {};
 const htmlPlugins = [];
-for (const rawName of entryNames) {
-  const entryName = rawName.replace(/\//g, '_');
-  entries[entryName] = `./src/entrypoints/${rawName}/index.tsx`;
+for (const entryName of entryNames) {
+  entries[entryName] = `./src/entrypoints/${entryName}.tsx`;
   htmlPlugins.push(new HtmlWebpackPlugin({
     filename: `${entryName}.html`,
     template: path.resolve(__dirname, 'src', 'templates', 'main.html'),

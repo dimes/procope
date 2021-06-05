@@ -5,6 +5,8 @@ declare module '@onflow/types' {
 
   export const Address: Type;
   export const String: Type;
+  export const Int: Type;
+  export const UInt64: Type;
 }
 
 declare module '@onflow/fcl' {

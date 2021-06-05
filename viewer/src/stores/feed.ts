@@ -14,7 +14,9 @@ import {
 } from '@onflow/fcl';
 import {
   Address,
+  Int,
   String,
+  UInt64,
 } from '@onflow/types';
 import { from, Observable } from 'rxjs';
 
@@ -22,6 +24,7 @@ export interface Post {
   readonly index: number;
   readonly title: string;
   readonly content: string;
+  readonly date: number;
 }
 
 export interface FeedPage {
@@ -59,6 +62,20 @@ export class FeedStore {
     );
   }
 
+  fetchSingle(address: string, index: number): Observable<Post | null> {
+    return from(
+      send([
+        script`
+        import Procope from 0xProfile
+
+        pub fun main(address: Address, index: Int): Procope.ReadOnlyPostStore? {
+          return Procope.readSinglePost(address: address, index: index)
+        }`,
+        args([arg(address, Address), arg(index, Int)]),
+      ]).then(res => decode<Post>(res))
+    );
+  }
+
   async initFeed(): Promise<void> {
     const res = await send([
       transaction`
@@ -87,6 +104,7 @@ export class FeedStore {
   }
 
   async createPost(title: string, content: string): Promise<void> {
+    const date = Date.now();
     const res = await send([
       transaction`
       import Procope from 0x01cf0e2f2f715450
@@ -94,10 +112,11 @@ export class FeedStore {
       transaction(
         title: String,
         content: String,
+        date: UInt64,
       ) {
         prepare(signer: AuthAccount) {
           if let postStore <- signer.load<@Procope.PostStore>(from: /storage/Posts) {
-            postStore.addPost(title: title, content: content)
+            postStore.addPost(title: title, content: content, date: date)
             signer.save(<-postStore, to: /storage/Posts)
           } else {
             panic("No previous post store to add post to")
@@ -109,7 +128,7 @@ export class FeedStore {
       proposer(authz),
       authorizations([authz]),
       limit(35),
-      args([arg(title, String), arg(content, String)]),
+      args([arg(title, String), arg(content, String), arg(date, UInt64)]),
     ]);
 
     const txId = await decode<string>(res);

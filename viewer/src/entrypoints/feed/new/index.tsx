@@ -1,4 +1,5 @@
 import '../../style.css';
+import './style.css';
 
 import EasyMDE from 'easymde';
 import { Subscription } from 'rxjs';
@@ -87,6 +88,11 @@ export class NewPostController {
 
 window.onload = async () => {
   qs('#main')!.innerHTML = template;
+
+  const styleLink = document.createElement('link');
+  styleLink.setAttribute('rel', 'stylesheet');
+  styleLink.setAttribute('href', 'https://unpkg.com/easymde/dist/easymde.min.css');
+  document.head.appendChild(styleLink);
 
   const bootstrap = new Bootstrap();
   const session = await bootstrap.session;

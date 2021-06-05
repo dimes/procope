@@ -47,7 +47,10 @@ export class NewPostController {
     if (!this.easyMde) {
       this.easyMde = new EasyMDE({
         element: qs(main, 'textarea.content')!,
+        minHeight: '300px',
       });
+
+      qs(main, '.EasyMDEContainer .CodeMirror')?.classList.add('dark:bg-gray-600', 'dark:text-gray-200');
     }
 
     const post = qs(main, 'button.post')!;

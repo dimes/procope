@@ -1,5 +1,6 @@
 import '../../style.css';
 
+import EasyMDE from 'easymde';
 import { Subscription } from 'rxjs';
 
 import { Path } from '../';
@@ -8,18 +9,22 @@ import { parsePath } from '../../../util/path';
 import { Session } from '../../../session';
 import { FeedStore } from '../../../stores/feed';
 import { qs } from '../../../util/dom';
+import { HeaderController } from '../../../header';
 
 export class NewPostController {
+  private readonly header: HeaderController;
   private readonly feedStore: FeedStore;
   private readonly subscription: Subscription;
 
   private exists: boolean = false;
   private posting: boolean = false;
+  private easyMde?: EasyMDE;
 
   constructor(
     private readonly session: Session,
     private readonly address: string,
   ) {
+    this.header = new HeaderController(session);
     this.feedStore = new FeedStore();
     this.subscription = this.feedStore
       .exists(this.address)
@@ -37,6 +42,12 @@ export class NewPostController {
     const main = qs('#main')!;
     main.style.display = '';
 
+    if (!this.easyMde) {
+      this.easyMde = new EasyMDE({
+        element: qs(main, 'textarea.content')!,
+      });
+    }
+
     const post = qs(main, 'button.post')!;
     if (!post.onclick) {
       post.onclick = async () => {
@@ -46,7 +57,8 @@ export class NewPostController {
           return;
         }
 
-        const content = qs<HTMLInputElement>(main, 'textarea.content')!.value;
+        const content = this.easyMde?.value();
+        console.log(content);
         if (!content) {
           window.alert('Content must be set');
           return;

@@ -6,7 +6,7 @@ import * as elements from 'safe-typed-html';
 import { Bootstrap } from '../../bootstrap';
 import { Session } from '../../session';
 import { FeedPage, FeedStore, Post } from '../../stores/feed';
-import { ensureEl, qs } from '../../util/dom';
+import { qs } from '../../util/dom';
 import { parsePath } from '../../util/path';
 import { HeaderController } from '../../header';
 
@@ -23,7 +23,7 @@ export class FeedController {
     this.feedStore = new FeedStore();
     this.subscription = this.feedStore
       .fetchFeed(this.account)
-      .subscribe(feed => this.render(feed));
+      .subscribe(page => this.render(page));
     this.render(null);
   }
 
@@ -50,11 +50,11 @@ export class FeedController {
     }
 
     const posts = page?.posts?.reverse() ?? [];
-    const feedItems = posts.map(item => (<div class="feed_item">
-      <h2>{item.title}</h2>
-      <div class="content">{item.content}</div>
+    const feedItems = posts.map(item => (<div class="feed_item mt-10">
+      <h2 class="text-2xl">{item.title}</h2>
+      <div class="content mt-3">{item.content}</div>
     </div>).toString());
-    qs(feedContainer, '.feed_items')!.innerHTML = feedItems.join();
+    qs(feedContainer, '.feed_items')!.innerHTML = feedItems.join('');
   }
 }
 

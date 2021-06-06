@@ -13,7 +13,8 @@ module.exports = merge(common, {
     historyApiFallback: {
       rewrites: [
         { from: /^\/feed\/[^\/]+\/new\/?$/, to: '/feed/new.html' },
-        { from: /^\/feed\/[^\/]+\/?$/, to: '/feed/index.html' }
+        { from: /^\/feed\/[^\/]+\/?$/, to: '/feed/index.html' },
+        { from: /^\/feed\/[^\/]+\/?\/[0-9]+$/, to: '/feed/single.html' },
       ],
     },
   },

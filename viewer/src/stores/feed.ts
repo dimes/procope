@@ -48,16 +48,16 @@ export class FeedStore {
     );
   }
 
-  fetchFeed(address: string): Observable<FeedPage | null> {
+  fetchFeed(address: string, page: number): Observable<FeedPage | null> {
     return from(
       send([
         script`
         import Procope from 0xProfile
 
-        pub fun main(address: Address): Procope.ReadOnlyPostStore? {
-          return Procope.read(address: address, page: 0)
+        pub fun main(address: Address, page: Int): Procope.ReadOnlyPostStore? {
+          return Procope.read(address: address, page: page)
         }`,
-        args([arg(address, Address)]),
+        args([arg(address, Address), arg(page, Int)]),
       ]).then(res => decode<FeedPage>(res))
     );
   }
@@ -68,7 +68,7 @@ export class FeedStore {
         script`
         import Procope from 0xProfile
 
-        pub fun main(address: Address, index: Int): Procope.ReadOnlyPostStore? {
+        pub fun main(address: Address, index: Int): Procope.ReadOnlyPost? {
           return Procope.readSinglePost(address: address, index: index)
         }`,
         args([arg(address, Address), arg(index, Int)]),

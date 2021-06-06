@@ -1,7 +1,28 @@
-<html class="dark">
+<html>
 
 <head>
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link rel="stylesheet" href="/css/fa-all.min.css" />
+  <style>
+    html body {
+      background-color: white;
+    }
+
+    html.dark body {
+      background-color: rgba(55, 65, 81, 1);
+    }
+  </style>
+  <script>
+    const date = new Date();
+    const hours = date.getHours();
+    const isDarkHours = date.getHours() > 17 || date.getHours() < 7;
+    const searchParams = new URLSearchParams(window.location.search);
+    const styleParam = searchParams.get('style');
+    const isDarkStyle = !styleParam || styleParam === 'dark';
+    if (isDarkHours && isDarkStyle) {
+      document.querySelector('html').classList.add('dark');
+    }
+  </script>
 </head>
 
 <body class="bg-gray-50 dark:bg-gray-700 dark:text-gray-200">

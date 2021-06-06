@@ -14,6 +14,8 @@ import { Session } from '../../session';
 import template from '../../templates/feed/index.html';
 import { parsePath } from '../../util/path';
 
+const PAGE_SIZE = 16;
+
 export class FeedController {
   private readonly header: HeaderController;
   private readonly feedStore: FeedStore;
@@ -21,12 +23,13 @@ export class FeedController {
 
   constructor(
     private readonly session: Session,
-    private readonly account: string,
+    private readonly address: string,
+    private readonly page: number,
   ) {
     this.header = new HeaderController(session);
     this.feedStore = new FeedStore();
     this.subscription = this.feedStore
-      .fetchFeed(this.account)
+      .fetchFeed(this.address, this.page)
       .subscribe(page => this.render(page));
     this.render(null);
   }
@@ -41,21 +44,23 @@ export class FeedController {
     main.style.display = '';
 
     const feedContainer = qs(main, '.feed_container')!;
-    qs(feedContainer, '.feed_title')!.innerText = this.account;
+    qs(feedContainer, '.feed_title')!.innerText = this.address;
 
-    if (this.account === this.session.user.addr) {
+    if (this.address === this.session.user.addr) {
       const newButton = qs(feedContainer, '.feed_title_container .new')!;
       newButton.classList.remove('hidden');
       if (!newButton.onclick) {
         newButton.onclick = () => {
-          window.location.href = `/feed/${this.account}/new`;
+          window.location.href = `/feed/${this.address}/new`;
         }
       }
     }
 
     const posts = page?.posts?.reverse() ?? [];
-    const feedItems = posts.map(item => (<div class="feed_item mt-10">
-      <h2 class="text-3xl">{item.title}</h2>
+    const feedItems = posts.map((item, i) => (<div class={`feed_item mt-10 ${i === 0 ? '' : 'pt-10 border-t'}`}>
+      <h2 class="text-3xl"><a href={`/feed/${this.address}/${(this.page * PAGE_SIZE) + (posts.length - i - 1)}`}>
+        {item.title}
+      </a></h2>
       <div class="content mt-3"
         dangerousInnerHtml={snarkdown(DOMPurify.sanitize(item.content, { USE_PROFILES: { html: true } }))}>
       </div>
@@ -64,7 +69,7 @@ export class FeedController {
   }
 }
 
-export interface Path {
+export interface IndexPath {
   account: string;
 }
 
@@ -73,8 +78,8 @@ window.onload = async () => {
 
   const bootstrap = new Bootstrap();
   const session = await bootstrap.session;
-  const parsedPath: Path = parsePath('/feed/:account');
+  const parsedPath: IndexPath = parsePath('/feed/:account');
 
   console.log('Creating app with session', session, parsedPath);
-  window.feed = new FeedController(session, parsedPath.account);
+  window.feed = new FeedController(session, parsedPath.account, 0);
 };

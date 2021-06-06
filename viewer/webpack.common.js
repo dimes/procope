@@ -10,6 +10,7 @@ const entryNames = [
   'index',
   'feed/index',
   'feed/new',
+  'feed/single',
 ];
 
 const entries = {};
@@ -45,6 +46,7 @@ module.exports = {
       {
         test: /\.html$/,
         use: 'html-loader',
+        exclude: path.resolve(__dirname, 'src', 'templates', 'main.html'),
       },
     ],
   },

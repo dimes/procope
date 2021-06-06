@@ -2,7 +2,7 @@ import '../style.css';
 
 import { Subscription } from 'rxjs';
 
-import { Path } from '.';
+import { IndexPath } from './index';
 import { Bootstrap } from '../../bootstrap';
 import { HeaderController } from '../../header';
 import { Session } from '../../session';
@@ -40,6 +40,9 @@ export class NewPostController {
   render() {
     const main = qs('#main')!;
     main.style.display = '';
+
+    console.log(main);
+    qs<HTMLAnchorElement>(main, '.back_to_feed')!.href = `/feed/${this.address}`;
 
     const post = qs(main, 'button.post')!;
     if (!post.onclick) {
@@ -81,14 +84,9 @@ export class NewPostController {
 window.onload = async () => {
   qs('#main')!.innerHTML = template;
 
-  const styleLink = document.createElement('link');
-  styleLink.setAttribute('rel', 'stylesheet');
-  styleLink.setAttribute('href', 'https://unpkg.com/easymde/dist/easymde.min.css');
-  document.head.appendChild(styleLink);
-
   const bootstrap = new Bootstrap();
   const session = await bootstrap.session;
-  const parsedPath: Path = parsePath('/feed/:account/new');
+  const parsedPath: IndexPath = parsePath('/feed/:account/new');
 
   console.log('Creating app with session', session, parsedPath);
   if (session.user.loggedIn) {

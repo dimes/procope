@@ -6,11 +6,10 @@ set -euo pipefail
 MAIN_DIR="${0:A:h}"
 BUILD_DIR="$MAIN_DIR/dist"
 
-# (cd $MAIN_DIR && npm run build-prod)
+rm -rf $BUILD_DIR
+cd $MAIN_DIR && npm run build-prod
 
 function uploadFiles {
-  echo "Uploading files $1"
-
   PIDS=()
   for FILE in "$@"; do
     if [ -d "$BUILD_DIR/$FILE" ]; then

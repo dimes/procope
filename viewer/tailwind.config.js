@@ -1,6 +1,6 @@
 module.exports = {
   purge: [
-    './templates/**/*.html',
+    './src/templates/**/*.html',
     './src/**/*.tsx',
   ],
   darkMode: 'class',

@@ -79,7 +79,7 @@ export class FeedStore {
   async initFeed(): Promise<void> {
     const res = await send([
       transaction`
-      import Procope from 0x01cf0e2f2f715450
+      import Procope from 0xProfile
 
       transaction {
         prepare(signer: AuthAccount) {
@@ -107,7 +107,7 @@ export class FeedStore {
     const date = Date.now();
     const res = await send([
       transaction`
-      import Procope from 0x01cf0e2f2f715450
+      import Procope from 0xProfile
 
       transaction(
         title: String,

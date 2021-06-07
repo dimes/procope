@@ -12,9 +12,9 @@ module.exports = merge(common, {
     port: 9000,
     historyApiFallback: {
       rewrites: [
-        { from: /^\/feed\/[^\/]+\/new\/?$/, to: '/feed/new.html' },
-        { from: /^\/feed\/[^\/]+\/?$/, to: '/feed/index.html' },
-        { from: /^\/feed\/[^\/]+\/?\/[0-9]+$/, to: '/feed/single.html' },
+        { from: /^\/feed\/[^\/]+\/new\/?$/, to: '/feed_new.html' },
+        { from: /^\/feed\/[^\/]+\/?$/, to: '/feed_index.html' },
+        { from: /^\/feed\/[^\/]+\/?\/[0-9]+$/, to: '/feed_single.html' },
       ],
     },
   },

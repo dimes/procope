@@ -15,13 +15,13 @@ const entryNames = [
 
 const entries = {};
 const htmlPlugins = [];
-for (const entryName of entryNames) {
-  entries[entryName] = `./src/entrypoints/${entryName}.tsx`;
+for (const rawName of entryNames) {
+  const entryName = rawName.replace(/\//g, '_')
+  entries[entryName] = `./src/entrypoints/${rawName}.tsx`;
   htmlPlugins.push(new HtmlWebpackPlugin({
     filename: `${entryName}.html`,
     template: path.resolve(__dirname, 'src', 'templates', 'main.html'),
     inject: 'body',
-    hash: true,
     chunks: [entryName]
   }));
 }

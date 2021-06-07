@@ -11,5 +11,5 @@ export function init() {
   fclConfig()
     .put('accessNode.api', 'https://access-testnet.onflow.org')
     .put('challenge.handshake', 'https://fcl-discovery.onflow.org/testnet/authn')
-    .put('0xProfile', '0x01cf0e2f2f715450');
+    .put('0xProfile', '0x58b0dd384adb3a13');
 }

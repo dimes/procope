@@ -43,9 +43,12 @@ export class SinglePostController {
 
     if (post) {
       qs(main, '.post_title')!.innerText = post.title;
-      qs(main, '.content')!.innerHTML = snarkdown(
-        DOMPurify.sanitize(post.content, { USE_PROFILES: { html: true } })
-      );
+      qs(main, '.content')!.innerHTML = post.content
+        .split('\n\n')
+        .filter(p => !!p)
+        .map(p => (<p class="mb-8 last:mb-0"
+          dangerousInnerHtml={snarkdown(DOMPurify.sanitize(p, { USE_PROFILES: { html: true } }))}></p>).toString())
+        .join('');
     }
   }
 }

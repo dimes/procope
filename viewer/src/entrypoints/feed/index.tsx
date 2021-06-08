@@ -61,8 +61,12 @@ export class FeedController {
       <h2 class="text-3xl"><a href={`/feed/${this.address}/${(this.page * PAGE_SIZE) + (posts.length - i - 1)}`}>
         {item.title}
       </a></h2>
-      <div class="content mt-3"
-        dangerousInnerHtml={snarkdown(DOMPurify.sanitize(item.content, { USE_PROFILES: { html: true } }))}>
+      <div class="content mt-3">
+        {item.content
+          .split('\n\n')
+          .filter(p => !!p)
+          .map(p => (<p class="mb-8 last:mb-0"
+            dangerousInnerHtml={snarkdown(DOMPurify.sanitize(p, { USE_PROFILES: { html: true } }))}></p>))}
       </div>
     </div>).toString());
     qs(feedContainer, '.feed_items')!.innerHTML = feedItems.join('');

@@ -41,7 +41,6 @@ export class NewPostController {
     const main = qs('#main')!;
     main.style.display = '';
 
-    console.log(main);
     qs<HTMLAnchorElement>(main, '.back_to_feed')!.href = `/feed/${this.address}`;
 
     const post = qs(main, 'button.post')!;
@@ -54,7 +53,6 @@ export class NewPostController {
         }
 
         const content = qs<HTMLTextAreaElement>(main, 'textarea')?.value;
-        console.log(content);
         if (!content) {
           window.alert('Content must be set');
           return;
@@ -67,10 +65,12 @@ export class NewPostController {
 
         try {
           if (!this.exists) {
+            console.log('Initializing feed');
             await this.feedStore.initFeed();
             this.exists = true;
           }
 
+          console.log('Creating post');
           await this.feedStore.createPost(title, content);
           window.location.href = `/feed/${this.address}`;
         } finally {

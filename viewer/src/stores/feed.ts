@@ -97,7 +97,7 @@ export class FeedStore {
       payer(authz),
       proposer(authz),
       authorizations([authz]),
-      limit(35),
+      limit(1000),
     ]);
     const txId = await decode<string>(res);
     await tx(txId).onceSealed();
@@ -127,7 +127,7 @@ export class FeedStore {
       payer(authz),
       proposer(authz),
       authorizations([authz]),
-      limit(35),
+      limit(1000),
       args([arg(title, String), arg(content, String), arg(date, UInt64)]),
     ]);
 

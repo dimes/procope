@@ -41,8 +41,7 @@ export class FeedStore {
 
       pub fun main(address: Address): Bool {
         return Procope.exists(address: address)
-      }
-      `,
+      }`,
         args([arg(address, Address)]),
       ]).then(res => decode<boolean>(res))
     );

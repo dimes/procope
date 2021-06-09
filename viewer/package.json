@@ -32,10 +32,16 @@
     "webpack-cli": "^4.7.0",
     "webpack-dev-server": "^3.11.2"
   },
-  "devDependencies": {},
+  "devDependencies": {
+    "@types/jest": "^26.0.23",
+    "flow-js-testing": "^0.1.10",
+    "jest": "^27.0.4",
+    "ts-jest": "^27.0.3"
+  },
   "scripts": {
     "start": "webpack serve --config webpack.dev.js",
-    "build-prod": "NODE_ENV=production webpack --config webpack.prod.js"
+    "build-prod": "NODE_ENV=production webpack --config webpack.prod.js",
+    "test": "jest"
   },
   "author": "",
   "license": "MIT"

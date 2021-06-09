@@ -86,11 +86,16 @@ pub contract Procope {
     }
 
     pub fun asReadOnly(page: Int): ReadOnlyPostStore {
-      let endIndex = self.max(0, self.posts.length - 16);
+      if (page < 0) {
+        panic("Page must be > 0")
+      }
+
+      let startIndex = self.max(0, self.posts.length - (16 * (page + 1)));
+      let endIndex = self.max(0, self.posts.length - (16 * page))
       let posts: [ReadOnlyPost] = []
 
-      var i = endIndex
-      while i < self.posts.length {
+      var i = startIndex
+      while i < endIndex {
         posts.append(self.posts[i].asReadOnly())
         i = i + 1
       }
@@ -110,6 +115,13 @@ pub contract Procope {
 
     priv fun max(_ a: Int, _ b: Int): Int {
       if (a > b) {
+        return a
+      }
+      return b
+    }
+
+    priv fun min(_ a: Int, _ b: Int): Int {
+      if (a < b) {
         return a
       }
       return b
@@ -138,7 +150,7 @@ pub contract Procope {
   }
 
   pub fun readSinglePost(address: Address, index: Int): ReadOnlyPost? {
-if let postStore = getAccount(address)
+    if let postStore = getAccount(address)
       .getCapability<&Procope.PostStore{Procope.HasPosts}>(/public/Feed)
       .borrow() {
       return postStore.single(index: index)
@@ -146,5 +158,4 @@ if let postStore = getAccount(address)
       return nil
     }
   }
-} 
- 
+}

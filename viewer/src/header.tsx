@@ -3,7 +3,7 @@ import { logIn } from '@onflow/fcl';
 import { qs } from './util/dom';
 import { Session } from './session';
 
-export class HeaderController implements ILogin {
+export class HeaderController {
   constructor(
     public readonly session: Session,
   ) {
@@ -14,6 +14,7 @@ export class HeaderController implements ILogin {
     const header = qs('#header')!;
     header.style.display = '';
 
+    const me = qs<HTMLButtonElement>(header, '.me')!;
     const login = qs<HTMLButtonElement>(header, '.login')!;
     const logout = qs<HTMLButtonElement>(header, '.logout')!;
 
@@ -27,6 +28,13 @@ export class HeaderController implements ILogin {
           this.session.user.logout();
         }
       }
+
+      me.classList.remove('hidden');
+      if (!me.onclick) {
+        me.onclick = () => {
+          window.location.href = `/feed/${this.session.user.addr}`;
+        };
+      }
     } else {
       login.classList.remove('hidden');
       if (!login.onclick) {
@@ -37,6 +45,9 @@ export class HeaderController implements ILogin {
 
       logout.classList.add('hidden');
       logout.onclick = null;
+
+      me.classList.add('hidden');
+      me.onclick = null;
     }
   }
 }

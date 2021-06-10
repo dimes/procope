@@ -18,6 +18,8 @@ window.onload = async () => {
     console.log('Logged in');
   } else {
     console.log('Not logged in');
-    window.login = new HeaderController(session);
   }
+
+  // Start the header
+  new HeaderController(session);
 };
